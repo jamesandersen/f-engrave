@@ -2223,6 +2223,28 @@ class Application(Frame):
             self.DoIt()
             if self.cut_type.get() == "v-carve":
                 self.V_Carve_It()
+
+		
+            # A couple quick notes:
+            # - It looks like the command line logic here is just dumping the contents of
+            #   self.gcode (an array of strings) out to the std out (the console)
+            # - The functions below *seem* to be the ones that relate to the GUI click handlers
+            #   and *seem* to add additional strings to the self.gcode array
+            # - I'm not really sure which order these functions should be called in... I'm 
+            #   guessing the calc ones first then the write.  You might need to try re-arranging them
+            # - If you can figure out (through testing) what arrangement is correct for the clean and
+            #   and v-clean options then hooking them up to the command line options should be pretty
+            #   straightforward
+		
+            # use one OR the other of these
+            bit_type = "straight"       # Write_Clean_Click	
+            bit_type = "vbit"           # Write_V_Clean_Click
+            
+            self.V_Carve_It() # Seems to be the important part of VCARVE_Recalculate_Click
+            self.Clean_Path_Calc(bit_type)
+
+            self.WRITE_CLEAN_UP(bit_type)
+
             self.WriteGCode()
 
             for line in self.gcode:
